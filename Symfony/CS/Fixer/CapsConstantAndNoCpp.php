@@ -1,10 +1,6 @@
 <?php
 
 /*
- * This file is part of the PHP CS utility.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
@@ -16,23 +12,30 @@ use Symfony\CS\FixerInterface;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ElseifFixer implements FixerInterface
+class CapsConstantAndNoCpp implements FixerInterface
 {
     public function fix(\SplFileInfo $file, $content)
     {
         // [Structure] elseif, not else if
-        return str_replace('else if (', 'elseif (', $content);
+        $content = str_replace(' && ',  ' AND ', $content);
+        $content = str_replace(' and ', ' AND ', $content);
+        $content = str_replace(' || ',  ' OR ',  $content);
+        $content = str_replace(' or ',  ' OR ',  $content);
+
+        $content = str_replace(' null ', ' NULL',  $content);
+        $content = str_replace(' true',  ' TRUE',  $content);
+        $content = str_replace(' false', ' FALSE',  $content);
+
+        return $content;
     }
 
     public function getLevel()
     {
-        // defined in PSR2 ¶5.1
         return FixerInterface::PSR2_LEVEL;
     }
 
     public function getPriority()
     {
-        // should be run after ControlSpacesFixer
         return -20;
     }
 
@@ -43,11 +46,11 @@ class ElseifFixer implements FixerInterface
 
     public function getName()
     {
-        return 'elseif';
+        return 'caps';
     }
 
     public function getDescription()
     {
-        return 'The keyword elseif should be used instead of else if so that all control keywords looks like single words.';
+        return 'Replaces || with OR, && with AND, and capitalizes AND, OR.';
     }
 }

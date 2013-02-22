@@ -22,13 +22,14 @@ class CurlyBracketsNewlineFixer implements FixerInterface
 
     // Capture the indentation first
     const ADD_NEWLINE = "\\1\\2\n\\1{";
+	const ADD_NEWLINE_AFTER = "\\1 {\n";
 
     public function fix(\SplFileInfo $file, $content)
     {
         $content = $this->classDeclarationFix($content);
         $content = $this->functionDeclarationFix($content);
-        $content = $this->anonymousFunctionsFix($content);
-        $content = $this->controlStatementsFix($content);
+        // $content = $this->anonymousFunctionsFix($content);
+        // $content = $this->controlStatementsFix($content);
         $content = $this->controlStatementContinuationFix($content);
         $content = $this->doWhileFix($content);
 
@@ -64,7 +65,7 @@ class CurlyBracketsNewlineFixer implements FixerInterface
     private function classDeclarationFix($content)
     {
         // [Structure] Add new line after class declaration
-        return preg_replace('/^([ \t]*)((?:[\w \t]+ )?(class|interface|trait) [\w, \t\\\\]+?)[ \t]*{\s*$/m', self::ADD_NEWLINE, $content);
+        return preg_replace('/((?:[\w \t]+ )?(class|interface|trait) [\w, \t\\\\]+?)[ \t]*{\s*$/m', self::ADD_NEWLINE_AFTER, $content);
     }
 
     private function functionDeclarationFix($content)
@@ -95,7 +96,7 @@ class CurlyBracketsNewlineFixer implements FixerInterface
         );
 
         // [Structure] No new line after control statements
-        return preg_replace('/((^|[\s\W])('.implode('|', $statements).'))([^\n]*?) *\n[^\S\n]*{/', self::REMOVE_NEWLINE, $content);
+	    return preg_replace('/((^|[\s\W])('.implode('|', $statements).'))([^\n]*?) *\n[^\S\n]*{/', self::REMOVE_NEWLINE, $content);
     }
 
     private function controlStatementContinuationFix($content)
@@ -106,7 +107,7 @@ class CurlyBracketsNewlineFixer implements FixerInterface
         );
 
         // [Structure] No new line after control statements
-        return preg_replace('/}\s*\n\s*(' . implode('|', $statements) . ')/', '} \\1', $content);
+        return preg_replace('/^([ \t]*)}\s*\n\s*(' . implode('|', $statements) . ')/', "}\n\\1", $content);
     }
 
     private function doWhileFix($content)
