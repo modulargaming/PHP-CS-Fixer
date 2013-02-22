@@ -22,7 +22,7 @@ class CapsConstantAndNoCpp implements FixerInterface
         $content = str_replace(' || ',  ' OR ',  $content);
         $content = str_replace(' or ',  ' OR ',  $content);
 
-        $content = str_replace(' null ', ' NULL',  $content);
+        $content = str_replace(' null', ' NULL',  $content);
         $content = str_replace(' true',  ' TRUE',  $content);
         $content = str_replace(' false', ' FALSE',  $content);
 
